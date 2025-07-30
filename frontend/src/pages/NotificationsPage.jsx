@@ -6,12 +6,9 @@ import NoNotificationsFound from "../components/NoNotificationsFound";
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
 
-  const { data: friendRequests, isLoading, error } = useQuery({
+  const { data: friendRequests, isLoading } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: getFriendRequests,
-    onError: (error) => {
-      console.error("Error fetching friend requests:", error);
-    },
   });
 
   const { mutate: acceptRequestMutation, isPending } = useMutation({
@@ -19,9 +16,6 @@ const NotificationsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friends"] });
-    },
-    onError: (error) => {
-      console.error("Error accepting friend request:", error);
     },
   });
 
@@ -36,13 +30,6 @@ const NotificationsPage = () => {
         {isLoading ? (
           <div className="flex justify-center py-12">
             <span className="loading loading-spinner loading-lg"></span>
-          </div>
-        ) : error ? (
-          <div className="flex justify-center py-12">
-            <div className="text-center">
-              <p className="text-error mb-2">Error loading notifications</p>
-              <p className="text-sm opacity-70">{error.message}</p>
-            </div>
           </div>
         ) : (
           <>
@@ -94,9 +81,7 @@ const NotificationsPage = () => {
               </section>
             )}
 
-            {/* ACCEPTED REQS NOTIFICATIONS - Currently disabled since accepted requests are deleted */}
-            {/* This section can be re-enabled if you want to track accepted requests differently */}
-            {/* 
+            {/* ACCEPTED REQS NOTIFICATONS */}
             {acceptedRequests.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -136,9 +121,8 @@ const NotificationsPage = () => {
                 </div>
               </section>
             )}
-            */}
 
-            {incomingRequests.length === 0 && (
+            {incomingRequests.length === 0 && acceptedRequests.length === 0 && (
               <NoNotificationsFound />
             )}
           </>
