@@ -252,3 +252,50 @@ export async function cancelFriendRequest(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function updateUserProfile(req, res) {
+  try {
+    const { fullName, bio, nativeLanguage, learningLanguage, profilePic } = req.body;
+    const userId = req.user.id;
+
+    // Validate required fields
+    if (!fullName || fullName.trim() === "") {
+      return res.status(400).json({ message: "Full name is required" });
+    }
+
+    // Update user profile
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        fullName: fullName.trim(),
+        bio: bio?.trim() || "",
+        nativeLanguage: nativeLanguage?.toLowerCase() || "",
+        learningLanguage: learningLanguage?.toLowerCase() || "",
+        profilePic: profilePic || "",
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: updatedUser._id,
+        fullName: updatedUser.fullName,
+        email: updatedUser.email,
+        bio: updatedUser.bio,
+        profilePic: updatedUser.profilePic,
+        nativeLanguage: updatedUser.nativeLanguage,
+        learningLanguage: updatedUser.learningLanguage,
+        location: updatedUser.location,
+        isOnboarded: updatedUser.isOnboarded,
+      },
+    });
+  } catch (error) {
+    console.error("Error in updateUserProfile controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}

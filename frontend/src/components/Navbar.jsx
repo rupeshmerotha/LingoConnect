@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
+import { BellIcon, LogOutIcon, ShipWheelIcon, SettingsIcon } from "lucide-react";
 import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
 
@@ -37,6 +37,12 @@ const Navbar = () => {
             <Link to={"/notifications"}>
               <button className="btn btn-ghost btn-circle">
                 <BellIcon className="h-6 w-6 text-base-content opacity-70" />
+              </button>
+            </Link>
+            
+            <Link to={"/settings"}>
+              <button className="btn btn-ghost btn-circle">
+                <SettingsIcon className="h-6 w-6 text-base-content opacity-70" />
               </button>
             </Link>
           </div>
