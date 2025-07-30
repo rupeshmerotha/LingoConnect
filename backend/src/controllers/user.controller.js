@@ -187,17 +187,18 @@ export async function rejectFriendRequest(req, res) {
 
 export async function getFriendRequests(req, res) {
   try {
+    console.log("Getting friend requests for user:", req.user.id);
+    
     const incomingReqs = await FriendRequest.find({
       recipient: req.user.id,
       status: "pending",
     }).populate("sender", "fullName profilePic nativeLanguage learningLanguage");
 
-    const acceptedReqs = await FriendRequest.find({
-      sender: req.user.id,
-      status: "accepted",
-    }).populate("recipient", "fullName profilePic");
+    console.log("Found incoming requests:", incomingReqs.length);
 
-    res.status(200).json({ incomingReqs, acceptedReqs });
+    // Since accepted requests are deleted after acceptance, we don't need to fetch them
+    // The acceptedReqs will always be empty, so we can remove this logic
+    res.status(200).json({ incomingReqs, acceptedReqs: [] });
   } catch (error) {
     console.error("Error in getFriendRequests controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
